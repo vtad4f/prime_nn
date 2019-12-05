@@ -45,17 +45,24 @@ if __name__ == '__main__':
    """
       BRIEF  Main Execution
    """
+   # Parse args
+   import argparse
+   parser = argparse.ArgumentParser()
+   parser.add_argument('n_hidden'  , type=int)
+   parser.add_argument('--limit', default=None, help='Optionally limit the data set sizes', metavar='N')
+   parser.add_argument('--epoch', default=None, help='Optionally set a max number of epochs', metavar='N')
+   args = parser.parse_args()
+   
    n_inputs = 1
-   n_hidden = 20
    n_output = 1
    
-   data_limit = 500
-   n_epoch    = 100
+   limit = args.limit if (args.limit is None) else int(args.limit)
+   epoch = args.epoch if (args.epoch is None) else int(args.epoch)
    
-   nn = buildNetwork(n_inputs, n_hidden, n_output, bias=True)
+   nn = buildNetwork(n_inputs, args.n_hidden, n_output, bias=True)
    
-   Train(nn, TrainingData(Path.FIRST, data_limit), n_epoch)
-   Test(nn, TestData(Path.FIRST, data_limit))
-   Test(nn, TestData(Path.SECOND, data_limit))
+   Train(nn, TrainingData(Path.FIRST , limit), epoch)
+   Test (nn,     TestData(Path.FIRST , limit))
+   Test (nn,     TestData(Path.SECOND, limit))
    
    
