@@ -1,0 +1,10 @@
+#!/bin/bash
+#SBATCH --job-name=vtad4f_job
+#SBATCH --ntasks=1
+#SBATCH --time=0-00:10:00
+#SBATCH --export=all
+#SBATCH --out=Forge-%j.out
+
+
+cd src-py && time python main 0 5 100 --epoch 100 && cd -
+
