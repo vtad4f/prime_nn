@@ -27,7 +27,7 @@ def TrainingData(fpath, limit = None):
    primes_set = frozenset(primes)
    
    for n in range(begin, end + 1):
-      data.addSample([n], [1 if n in primes else -1])
+      data.addSample([n], [1 if n in primes_set else -1])
       
    return data
    
