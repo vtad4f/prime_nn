@@ -1,5 +1,5 @@
 
-from data import TrainingData, TestData, Path
+from data import Path, Training, FirstNData, RandomRangeData
 from pybrain.structure.modules import SigmoidLayer, TanhLayer
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.tools.shortcuts import buildNetwork
@@ -7,11 +7,11 @@ import sys
 
 
 class Activation:
-   SIG  = SigmoidLayer, .5
-   TANH = TanhLayer, 0
+   SIG  = SigmoidLayer, 0, .5, 1
+   TANH = TanhLayer, -1, 0, 1
    ALL  = [SIG, TANH]
    
-def Train(nn, data, n_epoch):
+def Train(nn, data, n_epoch = None):
    """
       BRIEF  Train using the data set
    """
@@ -32,7 +32,7 @@ def Test(nn, data, threshold):
    right = 0
    wrong = 0
    for (input, expected) in data:
-      if nn.activate([input]) > threshold:
+      if nn.activate([input])[0] > threshold:
          if expected > threshold:
             right += 1
          else:
@@ -54,23 +54,20 @@ if __name__ == '__main__':
    # Parse args
    import argparse
    parser = argparse.ArgumentParser()
-   parser.add_argument('act_fcn',  type=int,     help='0=Sig, 1=Tanh', choices=range(len(Activation.ALL)))
-   parser.add_argument('n_hidden', type=int)
-   parser.add_argument('n_nodes',  type=int,     help='Number of nodes per hidden layer')
-   parser.add_argument('--limit',  default=None, help='Optionally limit the data set sizes', metavar='N')
-   parser.add_argument('--epoch',  default=None, help='Optionally set a max number of epochs', metavar='N')
+   parser.add_argument('act_fcn',  type=int, help='0=Sig, 1=Tanh', choices=range(len(Activation.ALL)))
+   parser.add_argument('n_hidden', type=int, help='Number of hidden layers')
+   parser.add_argument('n_nodes',  type=int, help='Number of nodes per hidden layer')
+   parser.add_argument('n_epochs', type=int, help='Set a max number of epochs')
+   parser.add_argument('data_len', type=int, help='Limit the data set size')
    args = parser.parse_args()
    
-   fcn, threshold = Activation.ALL[args.act_fcn]
+   fcn, low, mid, high = Activation.ALL[args.act_fcn]
    layers = [1] + [args.n_nodes]*args.n_hidden + [1]
    
    nn = buildNetwork(*layers, hiddenclass=fcn, outclass=fcn)
    
-   limit = args.limit if (args.limit is None) else int(args.limit)
-   epoch = args.epoch if (args.epoch is None) else int(args.epoch)
-   
-   Train(nn, TrainingData(Path.FIRST , limit), epoch)
-   Test (nn,     TestData(Path.FIRST , limit), threshold)
-   Test (nn,     TestData(Path.SECOND, limit), threshold)
+   Train(nn, Training(FirstNData(Path.FIRST,  low, high, args.data_len)), args.n_epochs)
+   Test (nn,          FirstNData(Path.FIRST,  low, high, args.data_len) , mid)
+   Test (nn,          FirstNData(Path.SECOND, low, high, args.data_len) , mid)
    
    
