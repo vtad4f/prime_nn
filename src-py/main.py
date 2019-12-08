@@ -66,7 +66,7 @@ if __name__ == '__main__':
    
    nn = buildNetwork(*layers, hiddenclass=fcn, outclass=fcn)
    
-   Train(nn, Training(FirstNData(Path.FIRST,  low, high, args.data_len)), args.n_epochs)
+   Train(nn, Training(RandomRangeData(Path.FIRST,  low, high, args.data_len)), args.n_epochs)
    Test (nn,          FirstNData(Path.FIRST,  low, high, args.data_len) , mid)
    Test (nn,          FirstNData(Path.SECOND, low, high, args.data_len) , mid)
    

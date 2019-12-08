@@ -50,7 +50,9 @@ def RandomRangeData(fpath, low, high, data_len):
    with open(fpath, 'r') as f:
       primes = map(int, Regex.NUMBER.findall(f.read()))
       
-   primes_subset = primes[:int(data_len/2 + 1)]
+   max_start = len(primes) - int(data_len/2)
+   start = random.randint(0, max_start)
+   primes_subset = primes[start:int(start + data_len/2 + 1)]
    
    data = set(primes_subset)
    while len(data) < data_len:
