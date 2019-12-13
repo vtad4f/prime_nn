@@ -22,6 +22,13 @@ with varying degrees of randomness. The trained network is then run against a se
 trained (the smallest prime and non-primes) and then the test set which starts just after the millionth prime
 number. See the --help option for details.
 
+# To Run
+source aliases.sh
+mkdir input
+setup
+cd src-py
+python main.py
+
 # Development Notes
 The majority of the development time went towards researching different python libraries that could be used
 to implement a neural network. The first attempt was made with pylab, numpy and scipy, but in the end pybrain
