@@ -23,11 +23,11 @@ trained (the smallest prime and non-primes) and then the test set which starts j
 number. See the --help option for details.
 
 # To Run
-source aliases.sh
-mkdir input
-setup
-cd src-py
-python main.py
+* source aliases.sh
+* mkdir input
+* setup
+* cd src-py
+* python main.py
 
 # Development Notes
 The majority of the development time went towards researching different python libraries that could be used
