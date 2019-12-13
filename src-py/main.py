@@ -1,5 +1,6 @@
 
-from data import Path, Training, FirstNData, RandomRangeData
+
+import data
 from pybrain.structure.modules import SigmoidLayer, TanhLayer
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.tools.shortcuts import buildNetwork
@@ -10,6 +11,10 @@ class Activation:
    SIG  = SigmoidLayer, 0, .5, 1
    TANH = TanhLayer, -1, 0, 1
    ALL  = [SIG, TANH]
+   
+class Training:
+   ALL = [ data.FirstN, data.RandomRange, data.Random ]
+   
    
 def Train(nn, data, n_epoch = None):
    """
@@ -54,20 +59,30 @@ if __name__ == '__main__':
    # Parse args
    import argparse
    parser = argparse.ArgumentParser()
-   parser.add_argument('act_fcn',  type=int, help='0=Sig, 1=Tanh', choices=range(len(Activation.ALL)))
-   parser.add_argument('n_hidden', type=int, help='Number of hidden layers')
-   parser.add_argument('n_nodes',  type=int, help='Number of nodes per hidden layer')
-   parser.add_argument('n_epochs', type=int, help='Set a max number of epochs')
-   parser.add_argument('data_len', type=int, help='Limit the data set size')
+   parser.add_argument('act_fcn',   type=int, help='0=Sig, 1=Tanh',                 choices=range(len(Activation.ALL)))
+   parser.add_argument('train_fcn', type=int, help='0=FirstN, 1=RandRange, 2=Rand', choices=range(len(Training.ALL)))
+   parser.add_argument('n_hidden',  type=int, help='Number of hidden layers')
+   parser.add_argument('n_nodes',   type=int, help='Number of nodes per hidden layer')
+   parser.add_argument('n_epochs',  type=int, help='Set a max number of epochs')
+   parser.add_argument('data_len',  type=int, help='Limit the data set size')
+   parser.add_argument('--pre', action='store_true', help='Remove numbers divisible by 2 or 5 before training')
    args = parser.parse_args()
    
+   # Convert args
    fcn, low, mid, high = Activation.ALL[args.act_fcn]
    layers = [1] + [args.n_nodes]*args.n_hidden + [1]
    
+   # Set up training data
+   training_data = Training.ALL[args.train_fcn](data.Path.FIRST, low, high, args.data_len)
+   if args.pre:
+      training_data = data.Preprocessing(training_data)
+      
+   # Train the neural network
    nn = buildNetwork(*layers, hiddenclass=fcn, outclass=fcn)
+   Train(nn, data.Training(training_data), args.n_epochs)
    
-   Train(nn, Training(RandomRangeData(Path.FIRST,  low, high, args.data_len)), args.n_epochs)
-   Test (nn,          FirstNData(Path.FIRST,  low, high, args.data_len) , mid)
-   Test (nn,          FirstNData(Path.SECOND, low, high, args.data_len) , mid)
+   # Test the neural network
+   Test(nn, data.FirstN(data.Path.FIRST,  low, high, args.data_len), mid) # small numbers
+   Test(nn, data.FirstN(data.Path.SECOND, low, high, args.data_len), mid) # large numbers
    
    
