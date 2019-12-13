@@ -13,8 +13,8 @@ the work they describe, but ideally we would try to find a different path forwar
 - https://www.quora.com/Which-is-the-fastest-prime-factorization-algorithm-to-date
 
 # What It Accomplishes
-This code (main.py) can be used to determine whether or not a number is prime. The intent was for this to
-be a stepping stone towards prime number factorization.
+This code (main.py) creates a neural network which could in theory be used to determine whether or not a number
+is prime. The intent was for this to be a stepping stone towards prime number factorization.
 
 # How It Does So
 First a neural network is trained using a range of numbers (including either a small portion of 50% primes)
